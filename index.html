@@ -11,7 +11,7 @@
             font-family: 'Noto Sans TC', sans-serif;
             background-color: #0f172a; 
             color: #f1f5f9;
-            overflow-x: hidden; /* 確保不出現左右滑動 */
+            overflow-x: hidden;
         }
         .indigo-gradient {
             background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
@@ -25,53 +25,64 @@
         .number-font {
             font-family: 'Roboto Mono', monospace;
         }
-        .status-positive {
-            color: #4ade80;
-        }
+        
+        /* 股票式顏色邏輯：正紅負綠 */
+        .status-positive { color: #f87171; } /* 紅色 (收益/正值) */
+        .status-negative { color: #4ade80; } /* 綠色 (支出/負值) */
+
         .divider {
             height: 1px;
             background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.5), transparent);
         }
-        /* 針對手機端的表格優化 */
+        
         @media (max-width: 640px) {
-            .mobile-tight-text {
-                font-size: 0.85rem;
-                line-height: 1.25rem;
-            }
-            .mobile-padding {
-                padding: 1rem !important;
-            }
-            table {
-                width: 100%;
-                table-layout: fixed; /* 固定寬度防止溢出 */
-            }
-            th, td {
-                padding: 0.75rem 0.5rem !important;
-            }
+            .mobile-padding { padding: 0.75rem !important; }
+            table { width: 100%; table-layout: fixed; }
+            th, td { padding: 0.5rem 0.25rem !important; }
+            /* 縮小淨現金流字體以防溢出 */
+            #yearlyNet { font-size: 0.9rem !important; }
+            #monthlyNet { font-size: 1.1rem !important; }
         }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-3 md:p-8">
     <div class="max-w-5xl mx-auto">
         <!-- Header -->
-        <header class="mb-6 border-l-4 border-indigo-500 pl-4 py-1">
-            <h1 class="text-2xl md:text-3xl font-bold tracking-tight mb-1">財務規劃分析系統</h1>
-            <p class="text-indigo-300 text-sm md:text-base font-medium">投資利差與現金流理性評估模型</p>
+        <header class="mb-4 border-l-4 border-indigo-500 pl-3 py-1">
+            <h1 class="text-xl md:text-3xl font-bold tracking-tight">財務規劃分析系統</h1>
+            <p class="text-indigo-300 text-xs md:text-base font-medium">投資利差與現金流理性評估模型</p>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-            <!-- Left Column: Inputs -->
-            <div class="lg:col-span-1 space-y-4 md:space-y-6">
-                <section class="card-glass mobile-padding p-6">
-                    <h2 class="text-lg font-bold mb-3 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-6">
+            <!-- Left Column -->
+            <div class="lg:col-span-1 space-y-3 md:space-y-6">
+                <section class="card-glass mobile-padding p-5">
+                    <h2 class="text-base font-bold mb-3 flex items-center">
+                        <svg class="w-4 h-4 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
                         資產配置參數
                     </h2>
                     
-                    <div class="space-y-3 md:space-y-4">
+                    <div class="space-y-3">
+                        <!-- 理財型房貸 -->
+                        <div>
+                            <label class="block text-xs text-indigo-300 mb-1 font-medium">理財型房貸 (萬)</label>
+                            <input type="number" id="flexMortgageAmount" value="200" class="w-full bg-slate-800 border border-indigo-900 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 number-font text-sm">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-indigo-200 mb-1">利率 (%)</label>
+                                <input type="number" id="flexMortgageRate" value="3.0" step="0.1" class="w-full bg-slate-800 border border-indigo-900 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 number-font text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-indigo-200 mb-1">年期 (年)</label>
+                                <input type="number" id="flexMortgageYears" value="7" class="w-full bg-slate-800 border border-indigo-900 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 number-font text-sm">
+                            </div>
+                        </div>
+                        <div class="divider"></div>
+
                         <!-- 一般房貸 -->
                         <div>
-                            <label class="block text-xs md:text-sm text-indigo-200 mb-1 font-medium">一般房貸總額 (萬)</label>
+                            <label class="block text-xs text-indigo-200 mb-1 font-medium">一般房貸總額 (萬)</label>
                             <input type="number" id="mortgageAmount" value="500" class="w-full bg-slate-800 border border-indigo-900 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 number-font text-sm">
                         </div>
                         <div class="grid grid-cols-2 gap-3">
@@ -84,112 +95,87 @@
                                 <input type="number" id="mortgageYears" value="30" class="w-full bg-slate-800 border border-indigo-900 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 number-font text-sm">
                             </div>
                         </div>
-
-                        <div class="divider"></div>
-
-                        <!-- 理財型房貸 -->
-                        <div>
-                            <label class="block text-xs md:text-sm text-indigo-200 mb-1 font-medium text-indigo-300">理財型房貸 (萬)</label>
-                            <input type="number" id="flexMortgageAmount" value="200" class="w-full bg-slate-800 border border-indigo-900 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 number-font text-sm">
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs text-indigo-200 mb-1">利率 (%)</label>
-                                <input type="number" id="flexMortgageRate" value="3.0" step="0.1" class="w-full bg-slate-800 border border-indigo-900 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 number-font text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-xs text-slate-400 mb-1">期限 (固定)</label>
-                                <div class="w-full bg-slate-900/50 border border-indigo-900/30 rounded-md px-3 py-2 text-slate-500 number-font text-sm">7 年</div>
-                            </div>
-                        </div>
-
                         <div class="divider"></div>
 
                         <!-- 保單借款 -->
                         <div>
-                            <label class="block text-xs md:text-sm text-indigo-200 mb-1 font-medium">保單借款額 (萬)</label>
+                            <label class="block text-xs text-indigo-200 mb-1 font-medium">保單借款額 (萬)</label>
                             <input type="number" id="policyAmount" value="100" class="w-full bg-slate-800 border border-indigo-900 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 number-font text-sm">
                         </div>
                         <div>
-                            <label class="block text-xs md:text-sm text-indigo-200 mb-1">保單借款利率 (%)</label>
+                            <label class="block text-xs text-indigo-200 mb-1">保單利率 (%)</label>
                             <input type="number" id="policyRate" value="4.0" step="0.1" class="w-full bg-slate-800 border border-indigo-900 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 number-font text-sm">
                         </div>
-
                         <div class="divider"></div>
 
-                        <!-- 投資回報 -->
+                        <!-- 預期報酬率 -->
                         <div>
-                            <label class="block text-xs md:text-sm text-indigo-200 mb-1 font-medium text-emerald-300">投資預期報酬率 (%)</label>
+                            <label class="block text-xs text-emerald-300 mb-1 font-medium">預期報酬率 (%)</label>
                             <input type="number" id="invRate" value="10.0" step="0.1" class="w-full bg-slate-800 border border-emerald-900 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 number-font text-sm">
                         </div>
                     </div>
                 </section>
                 
-                <button onclick="calculate()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-md transition duration-200 shadow-lg text-sm md:text-base">
+                <button onclick="calculate()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-md transition duration-200 shadow-lg text-sm">
                     更新分析數據
                 </button>
             </div>
 
-            <!-- Right Column: Results -->
+            <!-- Right Column -->
             <div class="lg:col-span-2 space-y-4 md:space-y-6">
                 <!-- Summary Stats -->
-                <div class="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-4">
-                    <div class="card-glass mobile-padding p-5 md:p-6 indigo-gradient border-none">
-                        <p class="text-indigo-200 text-xs md:text-sm font-medium">總投資資產</p>
-                        <h3 class="text-xl md:text-3xl font-bold number-font mt-1"><span id="totalCapital">0</span> <span class="text-xs md:text-lg">TWD</span></h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="card-glass mobile-padding p-4 indigo-gradient border-none">
+                        <p class="text-indigo-200 text-[10px] md:text-sm font-medium">總投資資產</p>
+                        <h3 class="text-lg md:text-3xl font-bold number-font mt-1"><span id="totalCapital">0</span> <span class="text-[10px] md:text-lg">TWD</span></h3>
                     </div>
-                    <div class="card-glass mobile-padding p-5 md:p-6 border-emerald-500/30">
-                        <p class="text-emerald-400 text-xs md:text-sm font-medium">加權借貸成本</p>
-                        <h3 class="text-xl md:text-3xl font-bold number-font mt-1"><span id="avgLoanRate">0</span> <span class="text-xs md:text-lg">%</span></h3>
+                    <div class="card-glass mobile-padding p-4 border-emerald-500/30">
+                        <p class="text-emerald-400 text-[10px] md:text-sm font-medium">加權借貸成本</p>
+                        <h3 class="text-lg md:text-3xl font-bold number-font mt-1"><span id="avgLoanRate">0</span> <span class="text-[10px] md:text-lg">%</span></h3>
                     </div>
                 </div>
 
                 <!-- Main Tables -->
                 <div class="card-glass overflow-hidden">
-                    <div class="mobile-padding p-6">
-                        <h2 class="text-base md:text-lg font-bold mb-4">月度現金流理性分析報告</h2>
+                    <div class="mobile-padding p-5">
+                        <h2 class="text-sm md:text-lg font-bold mb-3">月度現金流理性分析報告</h2>
                         <div class="overflow-hidden">
                             <table class="w-full text-left">
                                 <thead class="bg-indigo-950/50">
                                     <tr>
-                                        <th class="w-1/2 px-2 md:px-4 py-2 text-xs text-indigo-300">分析項目</th>
-                                        <th class="w-1/4 px-2 md:px-4 py-2 text-xs text-indigo-300 text-right">每月</th>
-                                        <th class="w-1/4 px-2 md:px-4 py-2 text-xs text-indigo-300 text-right">年度</th>
+                                        <th class="w-[45%] px-2 py-2 text-[10px] text-indigo-300">分析項目</th>
+                                        <th class="w-[27.5%] px-2 py-2 text-[10px] text-indigo-300 text-right">每月</th>
+                                        <th class="w-[27.5%] px-2 py-2 text-[10px] text-indigo-300 text-right">年度</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-indigo-900/30">
-                                    <tr class="hover:bg-indigo-900/10">
-                                        <td class="px-2 md:px-4 py-3 text-xs md:text-sm">
-                                            投資配息 (<span id="displayInvRate">10.0</span>%)
-                                        </td>
-                                        <td class="px-2 md:px-4 py-3 text-right number-font text-emerald-400 font-bold text-xs md:text-sm" id="monthlyInv">+ 0</td>
-                                        <td class="px-2 md:px-4 py-3 text-right number-font text-emerald-400 text-xs md:text-sm" id="yearlyInv">0</td>
+                                    <tr>
+                                        <td class="px-2 py-3 text-xs md:text-sm">投資配息 (<span id="displayInvRate">10.0</span>%)</td>
+                                        <td class="px-2 py-3 text-right number-font status-positive font-bold text-xs md:text-sm" id="monthlyInv">+ 0</td>
+                                        <td class="px-2 py-3 text-right number-font status-positive text-xs md:text-sm" id="yearlyInv">0</td>
                                     </tr>
-                                    <tr class="hover:bg-indigo-900/10">
-                                        <td class="px-2 md:px-4 py-3 text-xs md:text-sm leading-tight">
-                                            一般房貸 <span class="text-[10px] text-slate-400 block" id="mortDesc">(30年本息)</span>
-                                        </td>
-                                        <td class="px-2 md:px-4 py-3 text-right number-font text-rose-400 font-bold text-xs md:text-sm" id="monthlyMort">- 0</td>
-                                        <td class="px-2 md:px-4 py-3 text-right number-font text-rose-400 text-xs md:text-sm" id="yearlyMort">0</td>
+                                    <!-- 理財房貸 -->
+                                    <tr>
+                                        <td class="px-2 py-3 text-xs md:text-sm leading-tight">理財房貸 <span class="text-[10px] text-indigo-400 block" id="flexDesc">(7年只還利息)</span></td>
+                                        <td class="px-2 py-3 text-right number-font status-negative font-bold text-xs md:text-sm" id="monthlyFlex">- 0</td>
+                                        <td class="px-2 py-3 text-right number-font status-negative text-xs md:text-sm" id="yearlyFlex">0</td>
                                     </tr>
-                                    <tr class="hover:bg-indigo-900/10">
-                                        <td class="px-2 md:px-4 py-3 text-xs md:text-sm leading-tight">
-                                            理財房貸 <span class="text-[10px] text-indigo-400 block">(只還利息)</span>
-                                        </td>
-                                        <td class="px-2 md:px-4 py-3 text-right number-font text-rose-400 font-bold text-xs md:text-sm" id="monthlyFlex">- 0</td>
-                                        <td class="px-2 md:px-4 py-3 text-right number-font text-rose-400 text-xs md:text-sm" id="yearlyFlex">0</td>
+                                    <!-- 一般房貸 -->
+                                    <tr>
+                                        <td class="px-2 py-3 text-xs md:text-sm leading-tight">一般房貸 <span class="text-[10px] text-slate-400 block" id="mortDesc">(30年本息)</span></td>
+                                        <td class="px-2 py-3 text-right number-font status-negative font-bold text-xs md:text-sm" id="monthlyMort">- 0</td>
+                                        <td class="px-2 py-3 text-right number-font status-negative text-xs md:text-sm" id="yearlyMort">0</td>
                                     </tr>
-                                    <tr class="hover:bg-indigo-900/10">
-                                        <td class="px-2 md:px-4 py-3 text-xs md:text-sm leading-tight">
-                                            保單借款 <span class="text-[10px] text-slate-400 block">(純息負擔)</span>
-                                        </td>
-                                        <td class="px-2 md:px-4 py-3 text-right number-font text-rose-400 font-bold text-xs md:text-sm" id="monthlyPolicy">- 0</td>
-                                        <td class="px-2 md:px-4 py-3 text-right number-font text-rose-400 text-xs md:text-sm" id="yearlyPolicy">0</td>
+                                    <!-- 保單借款 -->
+                                    <tr>
+                                        <td class="px-2 py-3 text-xs md:text-sm leading-tight">保單借款 <span class="text-[10px] text-slate-400 block">(純息負擔)</span></td>
+                                        <td class="px-2 py-3 text-right number-font status-negative font-bold text-xs md:text-sm" id="monthlyPolicy">- 0</td>
+                                        <td class="px-2 py-3 text-right number-font status-negative text-xs md:text-sm" id="yearlyPolicy">0</td>
                                     </tr>
                                     <tr class="bg-indigo-900/20">
-                                        <td class="px-2 md:px-4 py-4 font-bold text-sm">淨現金流</td>
-                                        <td class="px-2 md:px-4 py-4 text-right number-font text-lg md:text-2xl font-bold status-positive" id="monthlyNet">+ 0</td>
-                                        <td class="px-2 md:px-4 py-4 text-right number-font text-sm md:text-lg font-bold status-positive" id="yearlyNet">0</td>
+                                        <td class="px-2 py-4 font-bold text-xs md:text-sm">淨現金流</td>
+                                        <td class="px-2 py-4 text-right number-font font-bold" id="monthlyNet">+ 0</td>
+                                        <td class="px-2 py-4 text-right number-font font-bold" id="yearlyNet">0</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -198,12 +184,12 @@
                 </div>
 
                 <!-- Footer Analysis -->
-                <div class="card-glass mobile-padding p-6 text-xs md:text-sm leading-relaxed text-indigo-200">
-                    <h4 class="text-white font-bold mb-2 uppercase tracking-widest text-[10px]">策略提示</h4>
+                <div class="card-glass mobile-padding p-5 text-[10px] md:text-sm leading-relaxed text-indigo-200">
+                    <h4 class="text-white font-bold mb-1 uppercase tracking-widest text-[10px]">策略提示</h4>
                     <ul class="list-disc pl-4 space-y-1">
-                        <li>目前配置利差約 <span class="number-font text-white" id="marginRate">0</span>%。當利差為正值時具套利空間。</li>
-                        <li>理財型房貸為只還利息，請留意 7 年到期後續約風險。</li>
-                        <li>建議留存 20% 盈餘作為升息預備金。</li>
+                        <li>配置利差約 <span class="number-font text-white" id="marginRate">0</span>%。當利差為正值時具套利空間。</li>
+                        <li>理財型房貸年期可視合約到期日自行調整，目前為只還利息。</li>
+                        <li>建議留存盈餘的 20% 以應對未來升息或市況變動風險。</li>
                     </ul>
                 </div>
             </div>
@@ -216,21 +202,28 @@
         }
 
         function calculate() {
-            // 取得輸入值
+            // 取得輸入值 - 理財型房貸
+            const flexAmount = parseFloat(document.getElementById('flexMortgageAmount').value) * 10000 || 0;
+            const flexRate = parseFloat(document.getElementById('flexMortgageRate').value) / 100 || 0;
+            const flexYears = parseFloat(document.getElementById('flexMortgageYears').value) || 0;
+
+            // 取得輸入值 - 一般房貸
             const mAmount = parseFloat(document.getElementById('mortgageAmount').value) * 10000 || 0;
             const mRate = parseFloat(document.getElementById('mortgageRate').value) / 100 || 0;
             const mYears = parseFloat(document.getElementById('mortgageYears').value) || 1;
             
-            const flexAmount = parseFloat(document.getElementById('flexMortgageAmount').value) * 10000 || 0;
-            const flexRate = parseFloat(document.getElementById('flexMortgageRate').value) / 100 || 0;
-
+            // 取得輸入值 - 保單借款
             const pAmount = parseFloat(document.getElementById('policyAmount').value) * 10000 || 0;
             const pRate = parseFloat(document.getElementById('policyRate').value) / 100 || 0;
             
+            // 預期報酬
             const inputInvRateVal = parseFloat(document.getElementById('invRate').value) || 0;
             const iRate = inputInvRateVal / 100;
 
-            // 計算一般房貸 (本息攤還)
+            // 1. 計算理財型房貸 (僅利息)
+            const monthlyFlex = (flexAmount * flexRate) / 12;
+
+            // 2. 計算一般房貸 (本息攤還)
             const monthlyMRate = mRate / 12;
             const mMonths = mYears * 12;
             let monthlyMort = 0;
@@ -240,56 +233,64 @@
                 monthlyMort = mAmount / mMonths;
             }
             
-            // 計算理財型房貸 (僅利息)
-            const monthlyFlex = (flexAmount * flexRate) / 12;
-
-            // 計算保單借款 (僅利息)
+            // 3. 計算保單借款 (僅利息)
             const monthlyPolicy = (pAmount * pRate) / 12;
 
-            // 計算投資收益
+            // 4. 計算投資收益
             const totalCapital = mAmount + flexAmount + pAmount;
             const monthlyInv = (totalCapital * iRate) / 12;
 
-            // 計算加權成本
+            // 5. 計算加權成本 (年化)
             const totalLoanInterestYearly = (mAmount * mRate) + (flexAmount * flexRate) + (pAmount * pRate);
             const avgLoanRate = totalCapital > 0 ? (totalLoanInterestYearly / totalCapital * 100) : 0;
 
-            // 計算淨現金流
+            // 6. 計算淨現金流
             const monthlyNet = monthlyInv - monthlyMort - monthlyFlex - monthlyPolicy;
 
-            // 更新 UI 數據
+            // UI 更新
             document.getElementById('totalCapital').innerText = formatNumber(totalCapital);
             document.getElementById('avgLoanRate').innerText = avgLoanRate.toFixed(2);
             document.getElementById('displayInvRate').innerText = inputInvRateVal.toFixed(1);
             
+            // 收益顯示
             document.getElementById('monthlyInv').innerText = "+ " + formatNumber(monthlyInv);
             document.getElementById('yearlyInv').innerText = formatNumber(monthlyInv * 12);
             
+            // 理財房貸顯示
+            document.getElementById('monthlyFlex').innerText = "- " + formatNumber(monthlyFlex);
+            document.getElementById('yearlyFlex').innerText = formatNumber(monthlyFlex * 12);
+            document.getElementById('flexDesc').innerText = `(${flexYears}年只還利息)`;
+
+            // 一般房貸顯示
             document.getElementById('monthlyMort').innerText = "- " + formatNumber(monthlyMort);
             document.getElementById('yearlyMort').innerText = formatNumber(monthlyMort * 12);
             document.getElementById('mortDesc').innerText = `(${mYears}年本息)`;
-
-            document.getElementById('monthlyFlex').innerText = "- " + formatNumber(monthlyFlex);
-            document.getElementById('yearlyFlex').innerText = formatNumber(monthlyFlex * 12);
             
+            // 保單借款顯示
             document.getElementById('monthlyPolicy').innerText = "- " + formatNumber(monthlyPolicy);
             document.getElementById('yearlyPolicy').innerText = formatNumber(monthlyPolicy * 12);
             
-            document.getElementById('monthlyNet').innerText = (monthlyNet >= 0 ? "+ " : "") + formatNumber(monthlyNet);
-            document.getElementById('yearlyNet').innerText = formatNumber(monthlyNet * 12);
+            // 淨現金流
+            const netMonthlyEl = document.getElementById('monthlyNet');
+            const netYearlyEl = document.getElementById('yearlyNet');
+            
+            netMonthlyEl.innerText = (monthlyNet >= 0 ? "+ " : "") + formatNumber(monthlyNet);
+            netYearlyEl.innerText = formatNumber(monthlyNet * 12);
+            
+            // 顏色邏輯 (正紅負綠)
+            if (monthlyNet >= 0) {
+                netMonthlyEl.classList.add('status-positive');
+                netMonthlyEl.classList.remove('status-negative');
+                netYearlyEl.classList.add('status-positive');
+                netYearlyEl.classList.remove('status-negative');
+            } else {
+                netMonthlyEl.classList.add('status-negative');
+                netMonthlyEl.classList.remove('status-positive');
+                netYearlyEl.classList.add('status-negative');
+                netYearlyEl.classList.remove('status-positive');
+            }
             
             document.getElementById('marginRate').innerText = (iRate * 100 - avgLoanRate).toFixed(2);
-            
-            // 顏色警示
-            const netElMonthly = document.getElementById('monthlyNet');
-            const netElYearly = document.getElementById('yearlyNet');
-            if(monthlyNet < 0) {
-                netElMonthly.style.color = "#fb7185";
-                netElYearly.style.color = "#fb7185";
-            } else {
-                netElMonthly.style.color = "#4ade80";
-                netElYearly.style.color = "#4ade80";
-            }
         }
 
         window.onload = calculate;
