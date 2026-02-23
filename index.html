@@ -9,7 +9,7 @@
     <style>
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            background-color: #0f172a; /* Slate 900 */
+            background-color: #0f172a; 
             color: #f1f5f9;
         }
         .indigo-gradient {
@@ -116,9 +116,11 @@
                                 </thead>
                                 <tbody class="divide-y divide-indigo-900/30">
                                     <tr class="hover:bg-indigo-900/10">
-                                        <td class="px-4 py-4">投資工具總配息收入 (10%)</td>
+                                        <td class="px-4 py-4">
+                                            投資工具總配息收入 (<span id="displayInvRate">10.0</span>%)
+                                        </td>
                                         <td class="px-4 py-4 text-right number-font text-emerald-400 font-bold" id="monthlyInv">+ 58,333</td>
-                                        <td class="px-4 py-4 text-right number-font text-emerald-400" id="yearlyInv">1,400,000</td>
+                                        <td class="px-4 py-4 text-right number-font text-emerald-400" id="yearlyInv">700,000</td>
                                     </tr>
                                     <tr class="hover:bg-indigo-900/10">
                                         <td class="px-4 py-4">
@@ -164,63 +166,61 @@
         }
 
         function calculate() {
-            // Inputs
-            const mAmount = parseFloat(document.getElementById('mortgageAmount').value) * 10000;
-            const mRate = parseFloat(document.getElementById('mortgageRate').value) / 100;
-            const mYears = parseFloat(document.getElementById('mortgageYears').value);
+            const mAmount = parseFloat(document.getElementById('mortgageAmount').value) * 10000 || 0;
+            const mRate = parseFloat(document.getElementById('mortgageRate').value) / 100 || 0;
+            const mYears = parseFloat(document.getElementById('mortgageYears').value) || 1;
             
-            const pAmount = parseFloat(document.getElementById('policyAmount').value) * 10000;
-            const pRate = parseFloat(document.getElementById('policyRate').value) / 100;
+            const pAmount = parseFloat(document.getElementById('policyAmount').value) * 10000 || 0;
+            const pRate = parseFloat(document.getElementById('policyRate').value) / 100 || 0;
             
-            const iRate = parseFloat(document.getElementById('invRate').value) / 100;
+            const inputInvRateVal = parseFloat(document.getElementById('invRate').value) || 0;
+            const iRate = inputInvRateVal / 100;
 
-            // Calculations
-            // Mortgage PMT: P * r * (1+r)^n / ((1+r)^n - 1)
             const monthlyMRate = mRate / 12;
             const mMonths = mYears * 12;
-            const monthlyMort = mAmount * (monthlyMRate * Math.pow(1 + monthlyMRate, mMonths)) / (Math.pow(1 + monthlyMRate, mMonths) - 1);
+            let monthlyMort = 0;
+            if (monthlyMRate > 0) {
+                monthlyMort = mAmount * (monthlyMRate * Math.pow(1 + monthlyMRate, mMonths)) / (Math.pow(1 + monthlyMRate, mMonths) - 1);
+            } else {
+                monthlyMort = mAmount / mMonths;
+            }
             
             const monthlyPolicy = (pAmount * pRate) / 12;
-            
             const totalCapital = mAmount + pAmount;
             const monthlyInv = (totalCapital * iRate) / 12;
-            
             const monthlyNet = monthlyInv - monthlyMort - monthlyPolicy;
-            const avgLoanRate = ((mAmount * mRate) + (pAmount * pRate)) / totalCapital * 100;
+            const avgLoanRate = totalCapital > 0 ? (((mAmount * mRate) + (pAmount * pRate)) / totalCapital * 100) : 0;
 
-            // Update UI
+            // 更新 UI 數據
             document.getElementById('totalCapital').innerText = formatNumber(totalCapital);
             document.getElementById('avgLoanRate').innerText = avgLoanRate.toFixed(2);
             
+            // 更新動態標題文字
+            document.getElementById('displayInvRate').innerText = inputInvRateVal.toFixed(1);
+            
             document.getElementById('monthlyInv').innerText = "+ " + formatNumber(monthlyInv);
             document.getElementById('yearlyInv').innerText = formatNumber(monthlyInv * 12);
-            
             document.getElementById('monthlyMort').innerText = "- " + formatNumber(monthlyMort);
             document.getElementById('yearlyMort').innerText = formatNumber(monthlyMort * 12);
             document.getElementById('mortDesc').innerText = `(${mYears}年本息攤還)`;
-            
             document.getElementById('monthlyPolicy').innerText = "- " + formatNumber(monthlyPolicy);
             document.getElementById('yearlyPolicy').innerText = formatNumber(monthlyPolicy * 12);
-            
-            document.getElementById('monthlyNet').innerText = "+ " + formatNumber(monthlyNet);
+            document.getElementById('monthlyNet').innerText = (monthlyNet >= 0 ? "+ " : "") + formatNumber(monthlyNet);
             document.getElementById('yearlyNet').innerText = formatNumber(monthlyNet * 12);
-            
             document.getElementById('marginRate').innerText = (iRate * 100 - avgLoanRate).toFixed(2);
-            document.getElementById('bufferValue').innerText = formatNumber(monthlyNet);
+            document.getElementById('bufferValue').innerText = formatNumber(Math.max(0, monthlyNet));
             
-            // Highlight color if negative (just in case)
             const netElMonthly = document.getElementById('monthlyNet');
             const netElYearly = document.getElementById('yearlyNet');
             if(monthlyNet < 0) {
-                netElMonthly.classList.replace('status-positive', 'text-rose-500');
-                netElYearly.classList.replace('status-positive', 'text-rose-500');
+                netElMonthly.style.color = "#fb7185";
+                netElYearly.style.color = "#fb7185";
             } else {
-                netElMonthly.classList.add('status-positive');
-                netElYearly.classList.add('status-positive');
+                netElMonthly.style.color = "#4ade80";
+                netElYearly.style.color = "#4ade80";
             }
         }
 
-        // Initial Calc
         window.onload = calculate;
     </script>
 </body>
